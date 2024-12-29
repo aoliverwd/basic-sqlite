@@ -1,0 +1,7 @@
+name: basic-sqlite
+
+services:
+  php:
+    type: php:8.3
+    via: cli
+    webroot: .

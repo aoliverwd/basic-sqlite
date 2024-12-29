@@ -1,0 +1,46 @@
+{
+    "name": "alexoliverwd/basic-sqlite",
+    "description": "A simple SQLite helper that makes executing queries easier.",
+    "keywords": [
+        "routing",
+        "http"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Oliver",
+            "homepage": "https://github.com/aoliverwd/basic-breathing",
+            "role": "Lead"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/aoliverwd/basic-breathing/issues"
+    },
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.3"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "pestphp/pest": "^3.6"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test" : [
+            "./vendor/bin/phpstan analyse -c phpstan.neon",
+            "@unit"
+        ],
+        "unit": [
+            "./vendor/bin/pest"
+        ]
+    }
+}
