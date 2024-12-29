@@ -1,13 +1,13 @@
 <?php
 
-test('Insert 100 rows', function () {
+test('Insert 1,000 rows using named placeholders', function () {
     $db = newDatabase();
     $table = $db->setTableName(tableName());
     $query = <<<QUERY
     INSERT INTO `$table` (uuid, foo, bar) VALUES (:uuid, :foo, :bar)
     QUERY;
 
-    for ($i = 1; $i <= 100; $i += 1) {
+    for ($i = 1; $i <= 1000; $i += 1) {
         $db->queryDB($query, false, [
             [
                 ':uuid',
@@ -27,6 +27,42 @@ test('Insert 100 rows', function () {
         ]);
     }
 
+    $db->completeWriteTransaction();
+
     $count = $db->queryDB("SELECT count(*) AS 'record_count' FROM `$table`");
-    expect($count[0]['record_count'])->toBe(100);
+    expect($count[0]['record_count'])->toBe(1000);
+});
+
+
+test(' Insert 1,000 rows using positional placeholders', function () {
+    $db = newDatabase();
+    $table = $db->setTableName(tableName());
+    $query = <<<QUERY
+    INSERT INTO `$table` (uuid, foo, bar) VALUES (?, ?, ?)
+    QUERY;
+
+    for ($i = 1; $i <= 1000; $i += 1) {
+        $db->queryDB($query, false, [
+            [
+                1,
+                uniqid('uuid' . time(), true),
+                SQLITE3_TEXT
+            ],
+            [
+                2,
+                uniqid('foo' . time(), true),
+                SQLITE3_TEXT
+            ],
+            [
+                3,
+                time(),
+                SQLITE3_TEXT
+            ],
+        ]);
+    }
+
+    $db->completeWriteTransaction();
+
+    $count = $db->queryDB("SELECT count(*) AS 'record_count' FROM `$table`");
+    expect($count[0]['record_count'])->toBe(2000);
 });

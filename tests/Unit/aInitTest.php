@@ -36,7 +36,6 @@ test('Register text field', function () {
         type: $colun_type,
         can_be_null: false,
         is_post_required: true,
-        callback: fn() => uniqid(date(c), true)
     );
 
     // First assertion
@@ -66,7 +65,6 @@ test('Register unique index', function () {
         type: $colun_type,
         can_be_null: false,
         is_post_required: true,
-        callback: fn() => uniqid(date(c), true),
         is_index: true,
         is_unique: true
     );
@@ -96,7 +94,6 @@ test('Register non unique index', function () {
         type: $colun_type,
         can_be_null: false,
         is_post_required: false,
-        callback: fn() => uniqid(date(c), true),
         is_index: true,
         is_unique: false
     );

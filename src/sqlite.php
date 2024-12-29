@@ -97,7 +97,11 @@ class SQLite
         $this->open();
 
         if ($this->connection instanceof \SQLite3) {
-            $this->connection->exec('BEGIN IMMEDIATE TRANSACTION;');
+            try {
+                $this->connection->exec('BEGIN IMMEDIATE TRANSACTION;');
+            } catch (\Exception $e) {
+                error_log($e->getMessage());
+            }
         }
     }
 
@@ -110,7 +114,12 @@ class SQLite
         $this->open();
 
         if ($this->is_transaction && $this->connection instanceof \SQLite3) {
-            $this->connection->exec('COMMIT;');
+            try {
+                $this->connection->exec('COMMIT;');
+            } catch (\Exception $e) {
+                error_log($e->getMessage());
+                $this->is_transaction = false;
+            }
         }
     }
 
@@ -167,7 +176,6 @@ class SQLite
      * @param  string       $type
      * @param  bool|boolean $can_be_null
      * @param  bool|boolean $is_post_required
-     * @param  callable|string|null  $callback
      * @return void
      */
     public function registerColumn(
@@ -175,7 +183,6 @@ class SQLite
         string $type,
         bool $can_be_null = true,
         bool $is_post_required = true,
-        callable|string|null $callback = null,
         bool $is_index = false,
         bool $is_unique = false
     ): void {
@@ -195,8 +202,7 @@ class SQLite
         $this->columns[$column_name] = [
             'name' => $column_name,
             'query' => $query,
-            'post_required' => $is_post_required,
-            'callback' => is_callable($callback) ? $callback : null
+            'post_required' => $is_post_required
         ];
     }
 
@@ -208,15 +214,6 @@ class SQLite
     public function hasColumn(string $column_name): bool
     {
         return isset($this->columns[$column_name]);
-    }
-
-    /**
-     * Get form fields
-     * @return array<mixed>
-     */
-    public function fields(): array
-    {
-        return $this->columns;
     }
 
     /**
@@ -346,7 +343,8 @@ class SQLite
                     return $return_result;
                 }
             } catch (\Exception $e) {
-                die($e->getMessage() . PHP_EOL . $query);
+                error_log($e->getMessage() . ' - ' . $query);
+                return false;
             }
         }
 
