@@ -5,6 +5,7 @@ test('Clean up', function () {
     $db_location = $db->getDatabaseLocation();
 
     if (file_exists($db_location)) {
+        $db->close();
         unlink($db_location);
     }
 

@@ -23,9 +23,24 @@ class SQLite
     private array $indices = [];
 
     /**
-     * Class constructor
+     * Default pragmas
+     * @var array<int|string|boolean>
      */
-    public function __construct(string $db_location)
+    private array $pragmas = [
+        'journal_mode' => 'WAL',
+        'busy_timeout' => 5000,
+        'synchronous' => 'NORMAL',
+        'cache_size' => 2000,
+        'temp_store' => 'memory',
+        'foreign_keys' => true
+    ];
+
+    /**
+     * Class constructor
+     * @param string $db_location
+     * @param array<int|string|boolean> $pragmas
+     */
+    public function __construct(string $db_location, array $pragmas = [])
     {
         $location_info = pathinfo($db_location);
         $this->connection = null;
@@ -39,13 +54,23 @@ class SQLite
         $this->db_location = $location_info['dirname'] . '/' .
             $location_info['filename'] . '.' .
             $this->sqlite_extension;
+
+        // Set pragmas
+        foreach ($pragmas as $key => $value) {
+            if (isset($this->pragmas[$key]) && !empty($value) && is_scalar($value)) {
+                $this->pragmas[$key] = $value;
+            }
+        }
+
+        // Open connection to database
+        $this->open();
     }
 
     /**
      * Open connection to database
      * @return void
      */
-    public function open(): void
+    private function open(): void
     {
         if (!$this->connection instanceof \SQLite3) {
             try {
@@ -55,13 +80,19 @@ class SQLite
                 // Enable exceptions
                 $this->connection->enableExceptions(true);
 
+
+                // Set pregmas
+                foreach ($this->pragmas as $key => $value) {
+                    $this->connection->exec("PRAGMA $key = $value;");
+                }
+
                 // Set journal_mode to WAL
-                $this->connection->exec('PRAGMA journal_mode = WAL;');
-                $this->connection->exec('PRAGMA busy_timeout = 5000;');
-                $this->connection->exec('PRAGMA synchronous = NORMAL;');
-                $this->connection->exec('PRAGMA cache_size = 2000;');
-                $this->connection->exec('PRAGMA temp_store = memory;');
-                $this->connection->exec('PRAGMA foreign_keys = true;');
+                // $this->connection->exec('PRAGMA journal_mode = WAL;');
+                // $this->connection->exec('PRAGMA busy_timeout = 5000;');
+                // $this->connection->exec('PRAGMA synchronous = NORMAL;');
+                // $this->connection->exec('PRAGMA cache_size = 2000;');
+                // $this->connection->exec('PRAGMA temp_store = memory;');
+                // $this->connection->exec('PRAGMA foreign_keys = true;');
             } catch (\Exception $e) {
                 exit($e->getMessage());
             }
@@ -349,18 +380,6 @@ class SQLite
         }
 
         return false;
-    }
-
-    /**
-     * Get column callback
-     * @param  string $column
-     * @return callable|null
-     */
-    public function getColumnCallback(string $column): callable|null
-    {
-        return isset($this->columns[$column]) && is_callable($this->columns[$column]['callback'])
-            ? $this->columns[$column]['callback']
-            : null;
     }
 
     /**

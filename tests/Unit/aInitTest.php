@@ -2,10 +2,7 @@
 
 test('Create new database', function () {
     $db = newDatabase();
-    $db->open();
     $db_exists = file_exists($db->getDatabaseLocation());
-    $db->close();
-
     expect($db_exists)->toBeTrue();
 });
 
