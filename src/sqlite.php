@@ -80,19 +80,10 @@ class SQLite
                 // Enable exceptions
                 $this->connection->enableExceptions(true);
 
-
-                // Set pregmas
+                // Set pregmas on database
                 foreach ($this->pragmas as $key => $value) {
                     $this->connection->exec("PRAGMA $key = $value;");
                 }
-
-                // Set journal_mode to WAL
-                // $this->connection->exec('PRAGMA journal_mode = WAL;');
-                // $this->connection->exec('PRAGMA busy_timeout = 5000;');
-                // $this->connection->exec('PRAGMA synchronous = NORMAL;');
-                // $this->connection->exec('PRAGMA cache_size = 2000;');
-                // $this->connection->exec('PRAGMA temp_store = memory;');
-                // $this->connection->exec('PRAGMA foreign_keys = true;');
             } catch (\Exception $e) {
                 exit($e->getMessage());
             }
@@ -287,7 +278,7 @@ class SQLite
         SQL;
 
         // Run create query
-        $this->queryDB($query, false);
+        $this->query($query, false);
     }
 
     /**
@@ -304,7 +295,7 @@ class SQLite
                 ALTER TABLE {$this->getCurrentTableName()} ADD {$column['query']}
                 SQL;
 
-                $this->queryDB($query, false);
+                $this->query($query, false);
             }
         }
     }
@@ -319,7 +310,7 @@ class SQLite
 
         foreach ($this->indices as $name => $query) {
             if (!in_array($name, $indices)) {
-                $this->queryDB($query, false);
+                $this->query($query, false);
             }
         }
     }
@@ -331,7 +322,7 @@ class SQLite
      * @param  array<mixed> $bind_params
      * @return \SQLite3Result|array<mixed>|boolean
      */
-    public function queryDB(string $query, bool $return_rows = true, array $bind_params = []): \SQLite3Result|array|bool
+    public function query(string $query, bool $return_rows = true, array $bind_params = []): \SQLite3Result|array|bool
     {
         // Check is write statement
         if ($this->queryIsWriteStatement($query) && !$this->is_transaction) {
@@ -388,7 +379,7 @@ class SQLite
      */
     public function getColumns(): array
     {
-        $columns = $this->queryDB(
+        $columns = $this->query(
             query: 'PRAGMA table_info(' . $this->getCurrentTableName() . ')',
         );
 
@@ -401,7 +392,7 @@ class SQLite
      */
     public function getIndices(): array
     {
-        $indices = $this->queryDB(
+        $indices = $this->query(
             query: 'PRAGMA index_list(' . $this->getCurrentTableName() . ')',
         );
 

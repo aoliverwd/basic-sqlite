@@ -35,7 +35,7 @@ When establishing a new class instance, the below methods are available:
 * registerColumn
 * hasColumn
 * migrate
-* queryDB
+* query
 * getColumns
 * getIndices
 * getNames
@@ -43,7 +43,7 @@ When establishing a new class instance, the below methods are available:
 
 ## TLDR
 
-Below demonstrates a common usage for SQLite helper class.
+Below demonstrates basic implementation of the SQLite helper class.
 
 ```php
 // Import the SQLite Helper Class
@@ -69,7 +69,7 @@ $query = <<<QUERY
 INSERT INTO `$table` (`first_name`, `last_name`, `uuid`) VALUES (?, ?, ?)
 QUERY;
 
-$db->queryDB($query, false, [
+$db->query($query, false, [
     [
         1,
         'some firstname',
@@ -88,14 +88,14 @@ $db->queryDB($query, false, [
 ]);
 
 // Count Records in the Table
-$count = $db->queryDB("SELECT count(*) AS 'record_count' FROM `$table`");
+$count = $db->query("SELECT count(*) AS 'record_count' FROM `$table`");
 echo "$count[0][record_count] record(s)";
 
 // Close the Database Connection
 $db->close();
 ```
 
-In summary, the script above demonstrates how to use the AOWD\SQLite helper class to:
+In summary, the script above demonstrates how to use the SQLite helper class to:
 
 1. Set up a database connection.
 2. Define a table schema.

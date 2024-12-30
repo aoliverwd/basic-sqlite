@@ -8,7 +8,7 @@ test('Insert 1,000 rows using named placeholders', function () {
     QUERY;
 
     for ($i = 1; $i <= 1000; $i += 1) {
-        $db->queryDB($query, false, [
+        $db->query($query, false, [
             [
                 ':uuid',
                 uniqid('uuid' . time(), true),
@@ -29,7 +29,7 @@ test('Insert 1,000 rows using named placeholders', function () {
 
     $db->completeWriteTransaction();
 
-    $count = $db->queryDB("SELECT count(*) AS 'record_count' FROM `$table`");
+    $count = $db->query("SELECT count(*) AS 'record_count' FROM `$table`");
     expect($count[0]['record_count'])->toBe(1000);
 });
 
@@ -42,7 +42,7 @@ test(' Insert 1,000 rows using positional placeholders', function () {
     QUERY;
 
     for ($i = 1; $i <= 1000; $i += 1) {
-        $db->queryDB($query, false, [
+        $db->query($query, false, [
             [
                 1,
                 uniqid('uuid' . time(), true),
@@ -63,6 +63,6 @@ test(' Insert 1,000 rows using positional placeholders', function () {
 
     $db->completeWriteTransaction();
 
-    $count = $db->queryDB("SELECT count(*) AS 'record_count' FROM `$table`");
+    $count = $db->query("SELECT count(*) AS 'record_count' FROM `$table`");
     expect($count[0]['record_count'])->toBe(2000);
 });
