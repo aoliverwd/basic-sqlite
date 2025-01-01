@@ -25,25 +25,31 @@ $db = new SQLite($db_location);
 
 When establishing a new class instance, the below methods are available:
 
-* close
-* getDatabaseLocation
-* beginWriteTransaction
-* completeWriteTransaction
-* queryIsWriteStatement
-* getCurrentTableName
-* setTableName
-* registerColumn
-* hasColumn
-* migrate
-* query
-* getColumns
-* getIndices
-* getNames
-* getKeyFromName
+- [__construct](#__construct)
+- [beginWriteTransaction](#beginwritetransaction)
+- [close](#close)
+- [completeWriteTransaction](#completewritetransaction)
+- [getColumns](#getcolumns)
+- [getCurrentTableName](#getcurrenttablename)
+- [getDatabaseLocation](#getdatabaselocation)
+- [getIndices](#getindices)
+- [getKeyFromName](#getkeyfromname)
+- [getNames](#getnames)
+- [hasColumn](#hascolumn)
+- [migrate](#migrate)
+- [query](#query)
+- [queryIsWriteStatement](#queryiswritestatement)
+- [setTableName](#settablename)
 
 ## TLDR
 
-Below demonstrates basic implementation of the SQLite helper class.
+In summary, the example below demonstrates how to use the SQLite helper class to:
+
+1. Set up a database connection.
+2. Define a table schema.
+3. Insert records using prepared statements.
+4. Query the database.
+5. Close the connection.
 
 ```php
 // Import the SQLite Helper Class
@@ -95,10 +101,267 @@ echo "$count[0][record_count] record(s)";
 $db->close();
 ```
 
-In summary, the script above demonstrates how to use the SQLite helper class to:
+# Public Methods
 
-1. Set up a database connection.
-2. Define a table schema.
-3. Insert records using prepared statements.
-4. Query the database.
-5. Close the connection.
+The below methods are detailed descriptions, parameters, return types, and usage examples for each method.
+
+## \__construct
+
+### Description
+
+Initializes the SQLite class with a specified database location and optional pragmas.
+
+### Parameters
+- `$db_location`: The file path to the SQLite database.
+- `$pragmas`: An optional associative array of pragmas to configure the SQLite database.
+
+
+### Returns
+An instance of the SQLite class.
+
+### Example
+```php
+$db = new \AOWD\SQLite('/path/to/database.sqlite', [
+    'journal_mode' => 'WAL',
+    'cache_size' => 10000
+]);
+```
+
+## beginWriteTransaction
+
+### Description
+
+Starts a write transaction for the SQLite database.
+
+
+### Returns
+Void.
+
+### Example
+```php
+$db->beginWriteTransaction();
+```
+
+## close
+
+### Description
+
+Closes the connection to the SQLite database.
+
+### Returns
+Void.
+
+### Example
+```php
+$db->close();
+```
+
+## completeWriteTransaction
+
+### Description
+
+Completes the current write transaction, committing any changes to the database.
+
+### Returns
+Void.
+
+### Example
+```php
+$db->completeWriteTransaction();
+```
+
+
+## getColumns
+
+### Description
+
+Retrieves a list of column names for the current table.
+
+### Returns
+Array of column names.
+
+### Example
+```php
+$columns = $db->getColumns();
+print_r($columns);
+```
+
+
+## getCurrentTableName
+
+### Description
+
+Retrieves the name of the current table being operated on.
+
+
+### Returns
+The name of the current table as a string.
+
+### Example
+```php
+$table_name = $db->getCurrentTableName();
+echo $table_name;
+```
+
+
+## getDatabaseLocation
+
+### Description
+
+Retrieves the file path of the SQLite database.
+
+### Returns
+The database file path as a string.
+
+### Example
+```php
+$db_location = $db->getDatabaseLocation();
+echo $db_location;
+```
+
+
+## getIndices
+
+### Description
+
+Retrieves a list of indices for the current table.
+
+### Returns
+Array of index names.
+
+### Example
+```php
+$indices = $db->getIndices();
+print_r($indices);
+```
+
+
+## getKeyFromName
+
+### Description
+
+Finds the key corresponding to a given name in an array of items.
+
+### Parameters
+- `$items`: An array of items.
+- `$name`: The name to find the key for.
+
+### Returns
+The key corresponding to the given name.
+
+### Example
+```php
+$key = $db->getKeyFromName([['name' => 'users'], ['name' => 'orders']], 'orders');
+```
+
+
+## getNames
+
+### Description
+
+Extracts names from an array of items.
+
+### Parameters
+- `$items`: An array of items to extract names from.
+
+
+### Returns
+Array of names.
+
+### Example
+```php
+$names = $db->getNames([['name' => 'users'], ['name' => 'orders']]);
+print_r($names);
+```
+
+
+## hasColumn
+
+### Description
+
+Checks whether a specified column exists in the current table.
+
+### Parameters
+- `$column_name`: The name of the column to check.
+
+
+### Returns
+Boolean indicating whether the column exists.
+
+### Example
+```php
+$has_column = $db->hasColumn('email');
+```
+
+## migrate
+
+### Description
+
+Performs migrations to ensure the database schema is up-to-date.
+
+### Returns
+Void.
+
+### Example
+```php
+$db->migrate();
+```
+
+
+## query
+
+### Description
+
+Executes an SQL query on the database, with optional parameter binding and row return.
+
+### Parameters
+- `$query`: The SQL query string to execute.
+- `$return_rows`: Whether to return rows from the query. Defaults to true.
+- `$bind_params`: An associative array of parameters to bind to the query.
+
+
+### Returns
+Array of rows if `$return_rows` is true; otherwise, Void.
+
+### Example
+```php
+$rows = $db->query('SELECT * FROM users WHERE id = :id', true, ['id' => 1]);
+```
+
+
+## queryIsWriteStatement
+
+### Description
+
+Checks if a given query is a write operation (e.g., INSERT, UPDATE, DELETE).
+
+### Parameters
+- `$query`: The SQL query string to analyze.
+
+
+### Returns
+Boolean indicating whether the query is a write operation.
+
+### Example
+```php
+$is_write = $db->queryIsWriteStatement('INSERT INTO users (name) VALUES ("John Doe")');
+```
+
+
+## setTableName
+
+### Description
+
+Sets the name of the table to be used for subsequent operations.
+
+### Parameters
+- `$table_name`: The name of the table.
+
+
+### Returns
+Void.
+
+### Example
+```php
+$db->setTableName('users');
+```
