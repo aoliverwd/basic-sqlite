@@ -344,11 +344,11 @@ class SQLite
                 if ($statement instanceof \SQLite3Stmt) {
                     if (!empty($bind_params)) {
                         foreach ($bind_params as $param) {
-                            if (!is_array($param) || count($param) !== 3) {
+                            if (!is_array($param) || count($param) < 2 || count($param) > 3) {
                                 throw new \Exception("Error Processing Params", 1);
                             }
 
-                            $statement->bindParam($param[0], $param[1], $param[2]);
+                            $statement->bindParam(...$param);
                         }
                     }
 

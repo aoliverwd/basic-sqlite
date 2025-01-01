@@ -11,18 +11,15 @@ test('Insert 1,000 rows using named placeholders', function () {
         $db->query($query, false, [
             [
                 ':uuid',
-                uniqid('uuid' . time(), true),
-                SQLITE3_TEXT
+                uniqid('uuid' . time(), true)
             ],
             [
                 ':foo',
-                uniqid('foo' . time(), true),
-                SQLITE3_TEXT
+                uniqid('foo' . time(), true)
             ],
             [
                 ':bar',
-                time(),
-                SQLITE3_TEXT
+                time()
             ],
         ]);
     }
