@@ -53,6 +53,7 @@ In summary, the example below demonstrates how to use the SQLite helper class to
 ```php
 // Import the SQLite Helper Class
 use AOWD\SQLite;
+use AOWD\DataType;
 
 // Create a New SQLite Database Instance
 $db = new SQLite(__DIR__ . '/users.sqlite');
@@ -62,9 +63,9 @@ $table = 'users';
 $db->setTableName($table);
 
 // Register Columns for the Table
-$db->registerColumn('first_name', 'text');
-$db->registerColumn('last_name', 'text');
-$db->registerColumn('uuid', 'text', false, true, true);
+$db->registerColumn('first_name', DataType::TEXT);
+$db->registerColumn('last_name', DataType::TEXT);
+$db->registerColumn('uuid', DataType::TEXT, false, true, true);
 
 // Create the Table Schema
 $db->migrate();

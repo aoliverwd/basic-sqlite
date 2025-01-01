@@ -2,6 +2,8 @@
 
 namespace AOWD;
 
+use AOWD\DataType;
+
 class SQLite
 {
     private string $table_name;
@@ -195,22 +197,22 @@ class SQLite
     /**
      * Create column
      * @param  string       $column_name
-     * @param  string       $type
+     * @param  DataType       $type
      * @param  bool|boolean $can_be_null
      * @param  bool|boolean $is_post_required
      * @return void
      */
     public function registerColumn(
         string $column_name,
-        string $type,
+        DataType $type,
         bool $can_be_null = true,
         bool $is_post_required = true,
         bool $is_index = false,
         bool $is_unique = false
     ): void {
-        $query = match (strtolower($type)) {
-            'text' => "`$column_name` " . strtoupper($type) . ($can_be_null ? '' : ' NOT NULL') . ' COLLATE NOCASE',
-            default => "`$column_name` " . strtoupper($type) . ($can_be_null ? '' : ' NOT NULL')
+        $query = match ($type->name) {
+            'TEXT' => "`$column_name` " . $type->name . ($can_be_null ? '' : ' NOT NULL') . ' COLLATE NOCASE',
+            default => "`$column_name` " . $type->name . ($can_be_null ? '' : ' NOT NULL')
         };
 
         // Set index query
