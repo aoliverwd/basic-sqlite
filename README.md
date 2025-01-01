@@ -23,9 +23,8 @@ $db_location = __DIR__ . '/example.sqlite';
 $db = new SQLite($db_location);
 ```
 
-When establishing a new class instance, the below methods are available:
+When establishing a [new class instance](#__construct), the below methods are available:
 
-- [__construct](#__construct)
 - [beginWriteTransaction](#beginwritetransaction)
 - [close](#close)
 - [completeWriteTransaction](#completewritetransaction)
