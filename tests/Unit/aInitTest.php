@@ -1,5 +1,7 @@
 <?php
 
+use AOWD\DataType;
+
 test('Create new database', function () {
     $db = newDatabase();
     $db_exists = file_exists($db->getDatabaseLocation());
@@ -26,7 +28,7 @@ test('Register text field', function () {
     $db = newDatabase();
     $table = $db->setTableName(tableName());
     $colun_name = 'uuid';
-    $colun_type = 'text';
+    $colun_type = DataType::TEXT;
 
     $db->registerColumn(
         column_name: $colun_name,
@@ -46,7 +48,7 @@ test('Register text field', function () {
 
     // Test column name and type
     expect($columns[1]['name'])->toBe($colun_name);
-    expect(strtolower($columns[1]['type']))->toBe($colun_type);
+    expect($columns[1]['type'])->toBe(DataType::TEXT->name);
     expect($columns[1]['notnull'])->toBe(1);
 });
 
@@ -55,7 +57,7 @@ test('Register unique index', function () {
     $table = $db->setTableName(tableName());
     $colun_name = 'foo';
     $index_id = "idx_$colun_name";
-    $colun_type = 'text';
+    $colun_type = DataType::TEXT;
 
     $db->registerColumn(
         column_name: $colun_name,
@@ -84,7 +86,7 @@ test('Register non unique index', function () {
     $table = $db->setTableName(tableName());
     $colun_name = 'bar';
     $index_id = "idx_$colun_name";
-    $colun_type = 'text';
+    $colun_type = DataType::TEXT;
 
     $db->registerColumn(
         column_name: $colun_name,
