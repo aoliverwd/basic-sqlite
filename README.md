@@ -56,7 +56,7 @@ use AOWD\SQLite;
 use AOWD\DataType;
 
 // Create a New SQLite Database Instance
-$db = new SQLite(__DIR__ . '/users.sqlite');
+$db = new SQLite(__DIR__ . '/users.sqlite3');
 
 // Set the Target Table
 $table = 'users';
@@ -82,15 +82,15 @@ $db->query($query, false, [
         SQLITE3_TEXT
     ],
     [
-        1,
+        2,
         'some lastname',
         SQLITE3_TEXT
     ],
     [
-        1,
+        3,
         uniqid('uuid' . time(), true),
         SQLITE3_TEXT
-    ],
+    ]
 ]);
 
 // Count Records in the Table

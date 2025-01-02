@@ -1,4 +1,4 @@
 .DS_Store
 vendor
-example.sqlite3
-error.log
+*.sqlite3
+*.log

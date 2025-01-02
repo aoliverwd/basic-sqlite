@@ -2,6 +2,18 @@
 
 use AOWD\DataType;
 
+beforeAll(function () {
+    // Remove test databases
+    array_map(function ($example_database) {
+        if (file_exists($example_database)) {
+            unlink($example_database);
+        }
+    }, [
+        __DIR__ . '/users.sqlite3',
+        dirname(__DIR__) . '/example.sqlite3'
+    ]);
+});
+
 test('Create new database', function () {
     $db = newDatabase();
     $db_exists = file_exists($db->getDatabaseLocation());
