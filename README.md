@@ -1,6 +1,8 @@
+![PHPUnit](https://github.com/aoliverwd/basic-sqlite/actions/workflows/ci.yml/badge.svg) [![Latest Stable Version](https://poser.pugx.org/alexoliverwd/basic-sqlite/v)](//packagist.org/packages/alexoliverwd/basic-sqlite) [![License](https://poser.pugx.org/alexoliverwd/basic-sqlite/license)](//packagist.org/packages/alexoliverwd/basic-sqlite)
+
 # Basic SQLite
 
-Basic SQLite is a lightweight PHP helper class designed to simplify interaction with SQLite databases. It streamlines the process of connecting to, querying, and managing SQLite databases, making database operations more intuitive and efficient for developers.
+Basic SQLite is a lightweight PHP helper class designed to simplify interaction with SQLite databases. It streamlines the process of connecting to, querying, and managing SQLite databases.
 
 ## Installation
 
