@@ -115,14 +115,24 @@ Initializes the SQLite class with a specified database location and optional pra
 - `$db_location`: The file path to the SQLite database.
 - `$pragmas`: An optional associative array of pragmas to configure the SQLite database.
 
+### Pragma Defaults
+
+By default the following pragmas are set when initializing a new instance:
+
+- journal_mode: WAL
+- busy_timeout: 5000
+- synchronous: NORMAL
+- cache_size: 2000
+- temp_store: memory
+- foreign_keys: true
+
 
 ### Returns
 An instance of the SQLite class.
 
 ### Example
 ```php
-$db = new \AOWD\SQLite('/path/to/database.sqlite', [
-    'journal_mode' => 'WAL',
+$db = new SQLite('/path/to/database.sqlite', [
     'cache_size' => 10000
 ]);
 ```
