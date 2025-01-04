@@ -117,7 +117,7 @@ Initializes the SQLite class with a specified database location and optional pra
 
 ### Pragma Defaults
 
-By default the following pragmas are set when initializing a new instance:
+By default, the following pragmas are set when initializing a new instance:
 
 - journal_mode: WAL
 - busy_timeout: 5000
