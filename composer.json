@@ -2,8 +2,8 @@
     "name": "alexoliverwd/basic-sqlite",
     "description": "A simple SQLite helper that makes executing queries easier.",
     "keywords": [
-        "routing",
-        "http"
+        "database",
+        "sqlite"
     ],
     "license": "MIT",
     "authors": [
