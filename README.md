@@ -1,4 +1,4 @@
-![PHPUnit](https://github.com/aoliverwd/basic-sqlite/actions/workflows/ci.yml/badge.svg) [![Latest Stable Version](https://poser.pugx.org/alexoliverwd/basic-sqlite/v)](//packagist.org/packages/alexoliverwd/basic-sqlite) [![License](https://poser.pugx.org/alexoliverwd/basic-sqlite/license)](//packagist.org/packages/alexoliverwd/basic-sqlite)
+![PHPUnit](https://github.com/aoliverwd/basic-sqlite/actions/workflows/ci.yml/badge.svg) [![Latest Stable Version](https://poser.pugx.org/alexoliverwd/basic-sqlite/v)](//packagist.org/packages/alexoliverwd/basic-sqlite) [![License](https://poser.pugx.org/alexoliverwd/basic-sqlite/license)](https://packagist.org/packages/alexoliverwd/basic-sqlite)
 
 # Basic SQLite
 
