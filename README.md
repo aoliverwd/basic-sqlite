@@ -27,6 +27,7 @@ $db = new SQLite($db_location);
 
 When establishing a [new class instance](#__construct), the below methods are available:
 
+- [registerColumn](#registerColumn)
 - [beginWriteTransaction](#beginwritetransaction)
 - [close](#close)
 - [completeWriteTransaction](#completewritetransaction)
@@ -96,7 +97,7 @@ $db->query($query, false, [
 ]);
 
 // Count Records in the Table
-$count = $db->query("SELECT count(*) AS 'record_count' FROM `$table`");
+$count = $db->query("SELECT count() AS 'record_count' FROM `$table`");
 echo "$count[0][record_count] record(s)";
 
 // Close the Database Connection
@@ -139,12 +140,42 @@ $db = new SQLite('/path/to/database.sqlite', [
 ]);
 ```
 
+## registerColumn
+
+### Description
+Is used to define a new column in the database table managed by the `SQLite` class. It supports various column attributes, such as type, nullability, and indexing.
+
+### Parameters
+- `$column_name` (string): The name of the column to be added.
+- `$type` (DataType): The data type of the column (e.g., `TEXT`, `INTEGER`).
+- `$can_be_null` (bool) (default: `true`): Specifies whether the column can accept `NULL` values.
+- `$is_post_required` (bool) (default: `true`): Indicates whether the column must be included in a POST request.
+- `$is_index` (bool) (default: `false`): Determines if the column should be indexed for faster lookups.
+- `$is_unique` (bool) (default: `false`): Specifies whether the column should enforce unique constraints.
+
+### Return Value
+This method does not return a value.
+
+### Example Usage
+```php
+use AOWD\DataType;
+
+// Register a column named 'username' with a TEXT type, non-nullable, and unique constraint
+$database->registerColumn(
+    column_name: 'username',
+    type: DataType::TEXT,
+    can_be_null: false,
+    is_post_required: true,
+    is_index: true,
+    is_unique: true
+);
+```
+
 ## beginWriteTransaction
 
 ### Description
 
 Starts a write transaction for the SQLite database.
-
 
 ### Returns
 Void.
@@ -337,7 +368,7 @@ Array of rows if `$return_rows` is true; otherwise, Void.
 
 ### Example
 ```php
-$rows = $db->query('SELECT * FROM users WHERE id = :id', true, ['id' => 1]);
+$rows = $db->query('SELECT  FROM users WHERE id = :id', true, ['id' => 1]);
 ```
 
 

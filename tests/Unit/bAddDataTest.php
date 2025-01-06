@@ -24,8 +24,6 @@ test('Insert 1,000 rows using named placeholders', function () {
         ]);
     }
 
-    $db->completeWriteTransaction();
-
     $count = $db->query("SELECT count(*) AS 'record_count' FROM `$table`");
     expect($count[0]['record_count'])->toBe(1000);
 });
@@ -57,8 +55,6 @@ test(' Insert 1,000 rows using positional placeholders', function () {
             ],
         ]);
     }
-
-    $db->completeWriteTransaction();
 
     $count = $db->query("SELECT count(*) AS 'record_count' FROM `$table`");
     expect($count[0]['record_count'])->toBe(2000);
