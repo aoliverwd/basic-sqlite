@@ -158,8 +158,6 @@ This method does not return a value.
 
 ### Example Usage
 ```php
-use AOWD\DataType;
-
 // Register a column named 'username' with a TEXT type, non-nullable, and unique constraint
 $database->registerColumn(
     column_name: 'username',
