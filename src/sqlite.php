@@ -3,6 +3,12 @@
 namespace AOWD;
 
 use AOWD\DataType;
+use AOWD\Exceptions\CompleteTransaction;
+use AOWD\Exceptions\BeginTransaction;
+use AOWD\Exceptions\ConnectError;
+use AOWD\Exceptions\DatabasePath;
+use AOWD\Exceptions\QueryError;
+use AOWD\Exceptions\SetTable;
 
 class SQLite
 {
@@ -49,7 +55,7 @@ class SQLite
 
         // Check if path provided is a valid directory
         if (!isset($location_info['dirname']) || !is_dir($location_info['dirname'])) {
-            throw new \Exception("Path provided is not a valid directory", 1);
+            throw new DatabasePath("Path provided is not a valid directory", 1);
         }
 
         // Set file location
@@ -87,7 +93,7 @@ class SQLite
                     $this->connection->exec("PRAGMA $key = $value;");
                 }
             } catch (\Exception $e) {
-                exit($e->getMessage());
+                throw new ConnectError($e->getMessage(), 1);
             }
         }
     }
@@ -124,7 +130,7 @@ class SQLite
             try {
                 $this->connection->exec('BEGIN IMMEDIATE TRANSACTION;');
             } catch (\Exception $e) {
-                error_log($e->getMessage());
+                throw new BeginTransaction($e->getMessage());
             }
         }
     }
@@ -141,8 +147,8 @@ class SQLite
             try {
                 $this->connection->exec('COMMIT;');
             } catch (\Exception $e) {
-                error_log($e->getMessage());
                 $this->is_transaction = false;
+                throw new CompleteTransaction($e->getMessage());
             }
         }
     }
@@ -178,7 +184,7 @@ class SQLite
     public function getCurrentTableName(): string
     {
         if (empty($this->table_name)) {
-            throw new \Exception("Table name has not been set", 1);
+            throw new SetTable("Table name has not been set", 1);
         }
 
         return $this->table_name;
@@ -345,7 +351,7 @@ class SQLite
                     if (!empty($bind_params)) {
                         foreach ($bind_params as $param) {
                             if (!is_array($param) || count($param) < 2 || count($param) > 3) {
-                                throw new \Exception("Error Processing Params", 1);
+                                throw new QueryError("Error Processing Params", 1);
                             }
 
                             $statement->bindParam(...$param);
@@ -367,8 +373,7 @@ class SQLite
                     return $return_result;
                 }
             } catch (\Exception $e) {
-                error_log($e->getMessage() . ' - ' . $query);
-                return false;
+                throw new QueryError($e->getMessage() . ' - ' . $query);
             }
         }
 
