@@ -265,7 +265,19 @@ class SQLite
 
             // Clear indices
             $this->indices = [];
+
+            // Clear column array
+            $this->clearRegisteredColumns();
         }
+    }
+
+    /**
+     * Clear registered columns array
+     * @return void
+     */
+    public function clearRegisteredColumns(): void
+    {
+        $this->columns = [];
     }
 
     /**
