@@ -70,6 +70,9 @@ class SQLite
             }
         }
 
+        // Check if file exists
+        $readonly = $readonly && file_exists($this->db_location);
+
         // Open connection to database
         $this->open($readonly);
     }
