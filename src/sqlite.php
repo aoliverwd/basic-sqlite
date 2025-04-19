@@ -15,7 +15,7 @@ class SQLite
     private string $table_name;
     private ?\SQLite3 $connection;
     private readonly string $db_location;
-    private string $sqlite_extension = 'sqlite3';
+    private string $sqlite_extension = "sqlite3";
     private bool $is_transaction = false;
 
     /**
@@ -35,33 +35,33 @@ class SQLite
      * @var array<int|string|boolean>
      */
     private array $pragmas = [
-        'journal_mode' => 'WAL',
-        'busy_timeout' => 5000,
-        'synchronous' => 'NORMAL',
-        'cache_size' => 2000,
-        'temp_store' => 'memory',
-        'foreign_keys' => true
+        "journal_mode" => "WAL",
+        "busy_timeout" => 5000,
+        "synchronous" => "NORMAL",
+        "cache_size" => 2000,
+        "temp_store" => "memory",
+        "foreign_keys" => true,
     ];
 
     /**
      * Class constructor
      * @param string $db_location
      * @param array<int|string|boolean> $pragmas
+     * @param bool $readonly
      */
-    public function __construct(string $db_location, array $pragmas = [])
+    public function __construct(string $db_location, array $pragmas = [], bool $readonly = false)
     {
         $location_info = pathinfo($db_location);
         $this->connection = null;
 
         // Check if path provided is a valid directory
-        if (!isset($location_info['dirname']) || !is_dir($location_info['dirname'])) {
+        if (!isset($location_info["dirname"]) || !is_dir($location_info["dirname"])) {
             throw new DatabasePath("Path provided is not a valid directory", 1);
         }
 
         // Set file location
-        $this->db_location = $location_info['dirname'] . '/' .
-            $location_info['filename'] . '.' .
-            $this->sqlite_extension;
+        $this->db_location =
+            $location_info["dirname"] . "/" . $location_info["filename"] . "." . $this->sqlite_extension;
 
         // Set pragmas
         foreach ($pragmas as $key => $value) {
@@ -71,19 +71,23 @@ class SQLite
         }
 
         // Open connection to database
-        $this->open();
+        $this->open($readonly);
     }
 
     /**
      * Open connection to database
+     * @param bool $readonly
      * @return void
      */
-    private function open(): void
+    private function open(bool $readonly = false): void
     {
         if (!$this->connection instanceof \SQLite3) {
             try {
                 // New database connection
-                $this->connection = new \SQLite3($this->db_location);
+                $this->connection = new \SQLite3(
+                    $this->db_location,
+                    $readonly ? SQLITE3_OPEN_READONLY : SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE
+                );
 
                 // Enable exceptions
                 $this->connection->enableExceptions(true);
@@ -128,7 +132,7 @@ class SQLite
 
         if ($this->connection instanceof \SQLite3) {
             try {
-                $this->connection->exec('BEGIN IMMEDIATE TRANSACTION;');
+                $this->connection->exec("BEGIN IMMEDIATE TRANSACTION;");
             } catch (\Exception $e) {
                 throw new BeginTransaction($e->getMessage());
             }
@@ -145,7 +149,7 @@ class SQLite
 
         if ($this->is_transaction && $this->connection instanceof \SQLite3) {
             try {
-                $this->connection->exec('COMMIT;');
+                $this->connection->exec("COMMIT;");
             } catch (\Exception $e) {
                 $this->is_transaction = false;
                 throw new CompleteTransaction($e->getMessage());
@@ -161,21 +165,20 @@ class SQLite
     public function queryIsWriteStatement(string $query): bool
     {
         // Write statement keys
-        $write_keys = ['CREATE', 'UPDATE', 'ALTER', 'DROP', 'INSERT', 'DELETE'];
+        $write_keys = ["CREATE", "UPDATE", "ALTER", "DROP", "INSERT", "DELETE"];
 
         // Remove table names and values from query
-        $prep_query = preg_replace('/`(.*)`|\'(.*)\'|"(.*)"|:[a-zA-Z0-9]+/', '', strtoupper($query));
+        $prep_query = preg_replace('/`(.*)`|\'(.*)\'|"(.*)"|:[a-zA-Z0-9]+/', "", strtoupper($query));
 
         // Check statement for key matches
         foreach ($write_keys as $key) {
-            if (preg_match('/' . $key . '/', (string) $prep_query)) {
+            if (preg_match("/" . $key . "/", (string) $prep_query)) {
                 return true;
             }
         }
 
         return false;
     }
-
 
     /**
      * Return table name
@@ -217,22 +220,22 @@ class SQLite
         bool $is_unique = false
     ): void {
         $query = match ($type->name) {
-            'TEXT' => "`$column_name` " . $type->name . ($can_be_null ? '' : ' NOT NULL') . ' COLLATE NOCASE',
-            default => "`$column_name` " . $type->name . ($can_be_null ? '' : ' NOT NULL')
+            "TEXT" => "`$column_name` " . $type->name . ($can_be_null ? "" : " NOT NULL") . " COLLATE NOCASE",
+            default => "`$column_name` " . $type->name . ($can_be_null ? "" : " NOT NULL"),
         };
 
         // Set index query
         if ($is_index) {
-            $unique = $is_unique ? 'UNIQUE' : '';
+            $unique = $is_unique ? "UNIQUE" : "";
             $index_name = "idx_$column_name";
             $table = $this->getCurrentTableName();
             $this->indices[$index_name] = "CREATE $unique INDEX IF NOT EXISTS $index_name ON $table($column_name)";
         }
 
         $this->columns[$column_name] = [
-            'name' => $column_name,
-            'query' => $query,
-            'post_required' => $is_post_required
+            "name" => $column_name,
+            "query" => $query,
+            "post_required" => $is_post_required,
         ];
     }
 
@@ -286,16 +289,19 @@ class SQLite
      */
     private function migrateNewTable(): void
     {
-        $columns = implode(",\n", array_map(function ($field) {
-            return $field['query'];
-        }, $this->columns));
+        $columns = implode(
+            ",\n",
+            array_map(function ($field) {
+                return $field["query"];
+            }, $this->columns)
+        );
 
         $query = <<<SQL
-        CREATE TABLE IF NOT EXISTS {$this->getCurrentTableName()} (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            {$columns}
-        );
-        SQL;
+CREATE TABLE IF NOT EXISTS {$this->getCurrentTableName()} (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    {$columns}
+);
+SQL;
 
         // Run create query
         $this->query($query, false);
@@ -310,10 +316,10 @@ class SQLite
         $column_names = $this->getNames($this->getColumns());
 
         foreach ($this->columns as $column) {
-            if (!in_array($column['name'], $column_names)) {
+            if (!in_array($column["name"], $column_names)) {
                 $query = <<<SQL
-                ALTER TABLE {$this->getCurrentTableName()} ADD {$column['query']}
-                SQL;
+ALTER TABLE {$this->getCurrentTableName()} ADD {$column["query"]}
+SQL;
 
                 $this->query($query, false);
             }
@@ -385,7 +391,7 @@ class SQLite
                     return $return_result;
                 }
             } catch (\Exception $e) {
-                throw new QueryError($e->getMessage() . ' - ' . $query);
+                throw new QueryError($e->getMessage() . " - " . $query);
             }
         }
 
@@ -398,9 +404,7 @@ class SQLite
      */
     public function getColumns(): array
     {
-        $columns = $this->query(
-            query: 'PRAGMA table_info(' . $this->getCurrentTableName() . ')',
-        );
+        $columns = $this->query(query: "PRAGMA table_info(" . $this->getCurrentTableName() . ")");
 
         return is_array($columns) ? $columns : [];
     }
@@ -411,9 +415,7 @@ class SQLite
      */
     public function getIndices(): array
     {
-        $indices = $this->query(
-            query: 'PRAGMA index_list(' . $this->getCurrentTableName() . ')',
-        );
+        $indices = $this->query(query: "PRAGMA index_list(" . $this->getCurrentTableName() . ")");
 
         return is_array($indices) ? $indices : [];
     }
@@ -427,7 +429,7 @@ class SQLite
     {
         // Get column names from subject
         if (!empty($items)) {
-            return array_map(fn($item) => $item['name'], $items);
+            return array_map(fn($item) => $item["name"], $items);
         }
 
         return [];
@@ -441,7 +443,7 @@ class SQLite
      */
     public function getKeyFromName(array $items, string $name): int
     {
-        $key = array_search($name, array_column($items, 'name'));
+        $key = array_search($name, array_column($items, "name"));
         return is_integer($key) ? $key : 0;
     }
 }
