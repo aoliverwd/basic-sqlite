@@ -2,3 +2,4 @@
 vendor
 *.sqlite3
 *.log
+.phpactor.json
