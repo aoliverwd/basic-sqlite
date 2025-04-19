@@ -115,8 +115,9 @@ The below methods are detailed descriptions, parameters, return types, and usage
 Initializes the SQLite class with a specified database location and optional pragmas.
 
 ### Parameters
-- `$db_location`: The file path to the SQLite database.
-- `$pragmas`: An optional associative array of pragmas to configure the SQLite database.
+- `$db_location` (string): The file path to the SQLite database.
+- `$pragmas` (array): An optional associative array of pragmas to configure the SQLite database.
+- `$readonly` (bool) (default: `false`): Specifies whether the database should be opened in read-only mode.
 
 ### Pragma Defaults
 
